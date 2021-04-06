@@ -1,5 +1,3 @@
-
-
 def startPalindrome(n):
 #    print(n)
     n = str(n)
