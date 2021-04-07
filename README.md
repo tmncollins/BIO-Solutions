@@ -13,7 +13,7 @@ If you have solution in any language feel free to send it in. All major language
 
 Currently missing solutions include:
 
-  - Waves 2003
   - Egyptian Fractions 1997
   - Alphametics (Cryptarithms) 1998
   - Dice Games 2000
+  - Waves 2003
