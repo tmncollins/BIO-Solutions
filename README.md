@@ -5,7 +5,7 @@ Solutions for the British Informatics Olympiad Problems
 
 All Solutions are currently only available in Python 3.
 
-Solutions work for Part A of each question, with some solutions offering explainations solutions for other parts of the question.
+Solutions work for Part A of each question, with some solutions offering explanations solutions for other parts of the question.
 
 Some solutions do not work fast enough, though in some cases this is more of the limitations of the Python 3 language.
 
