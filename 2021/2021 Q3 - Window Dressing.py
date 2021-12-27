@@ -1,4 +1,4 @@
-from _collections import deque
+from _collections import deque, defaultdict
 from time import time
 
 shortest = dict()
@@ -13,17 +13,17 @@ def q3(t, c=False):
 #        print(pending)
         look, d = pending.popleft()
 #        print(look)
-        if d > best: continue
+        if d > best + 5: continue
         # add a letter
         if len(look) < len(t):
             i = letters[letters.index(max(look))+1]
             new = look + i
             if new not in shortest.keys() or d+1 < shortest[new]:
                 shortest[new] = d+1
-                parent[new] = {look}
+                parent[new] = [look]
                 pending.append([new, d+1])
             elif d+1 == shortest[new]:
-                parent[new].add(look)
+                parent[new].append(look)
             if new == t:
                 if not c: return d+1
                 else: best = d+1
@@ -33,10 +33,10 @@ def q3(t, c=False):
             new = look[1] + look[0] + look[2:]
             if new not in shortest.keys() or d+1 < shortest[new]:
                 shortest[new] = d+1
-                parent[new] = {look}
+                parent[new] = [look]
                 pending.append([new, d+1])
             elif d+1 == shortest[new]:
-                parent[new].add(look)
+                parent[new].append(look)
             if new == t:
                 if not c: return d+1
                 else: best = d+1
@@ -46,10 +46,10 @@ def q3(t, c=False):
             new = look[1:] + look[0]
             if new not in shortest.keys() or d+1 < shortest[new]:
                 shortest[new] = d+1
-                parent[new] = {look}
+                parent[new] = [look]
                 pending.append([new, d+1])
             elif d+1 == shortest[new]:
-                parent[new].add(look)
+                parent[new].append(look)
             if new == t:
                 if not c: return d+1
                 else: best = d+1
@@ -69,7 +69,7 @@ def c(end):
 
 a = input()
 start = time()
-print(q3(a))
-# part C is not correct, only scores 3/5
-#c(a)
+print(q3(a, True))
+
+c(a)
 #print(time() - start)
