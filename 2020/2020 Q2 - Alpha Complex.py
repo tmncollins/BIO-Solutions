@@ -1,81 +1,109 @@
 from collections import defaultdict
-import time
-from functools import lru_cache
+from time import time
+from copy import deepcopy
 
-"""
-NOTE THAT THIS PYTHON SOLUTION IS A LITTLE TOO SLOW FOR SOME TEST CASES
-"""
-
-complex = defaultdict(list)
-visited = defaultdict(int)
-exits = defaultdict(int)
-pos = "A"
-
-def generateComplex(plan):
-    alpha = list("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
-
-    letters = alpha[:len(plan) + 2]
-    plan = list(plan)
-    while plan:
-        for l in letters:
-            if l not in plan:
-                complex[l].append(plan[0])
-                complex[plan[0]].append(l)
-                plan.pop(0)
-                letters.remove(l)
-                break
-    for l in letters:
-        for l2 in letters:
-            if l != l2:
-                complex[l].append(l2)
-
-
-def printComplex():
-    for room in sorted(complex.keys()):
-        print("".join(sorted(complex[room])))
-
-#@lru_cache(maxsize=None)
-def move(pos, n):
-    global visited, complex, exits
-
-    if n == 1:
-        next = complex[pos][0]
-        exits[pos + next] += 1
-        return next
-    else:
-        next = complex[pos]
-        for j in range(len(next)):
-            i = next[j]
-            if exits[pos + i] % 2 == 1:
-                if i == next[-1]:
-                    exits[pos+i] += 1
-                    return i
-                else:
-                    i = next[j+1]
-                    exits[pos+i] += 1
-                    return i
-
+alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+rooms = defaultdict(list)
 
 plan, p, q = input().split()
-p, q = int(p), int(q)
-start = time.time()
+plan = list(plan)
+p = int(p)
+q = int(q)
+n = len(plan) + 2
 
-generateComplex(plan)
-printComplex()
+start = time()
 
-for item in complex:
-    complex[item] = sorted(complex[item])
+# generate graph from plan
+# list of letters left to choose
+to_choose = list(alphabet[:n])
+for i in range(n - 2):
+    for letter in to_choose:
+        if letter not in plan:
+            # connect these rooms
+            rooms[letter].append(plan[0])
+            rooms[plan[0]].append(letter)
+            # update lists
+            plan.pop(0)
+            to_choose.remove(letter)
+            break
 
-for i in range(p):
-    visited[pos] += 1
-    pos = move(pos, visited[pos] % 2)
-print(pos,end="")
-for i in range(q-p):
-    visited[pos] += 1
-    pos = move(pos, visited[pos] % 2)
-print(pos)
+# connect the two remaining rooms
+rooms[to_choose[0]].append(to_choose[1])
+rooms[to_choose[1]].append(to_choose[0])
 
-print("Time:", time.time() - start)
+# output graph
+for i in range(n):
+    output = ""
+    rooms[alphabet[i]] = sorted(rooms[alphabet[i]])
+
+    for room in rooms[alphabet[i]]:
+        output += room
+
+    print(output)
+
+# main code
+
+position = "A"
+# initialise dictionaries
+visited_odd = defaultdict(bool)
+exited_odd = defaultdict(bool)
+
+def move():
+    global position, visited_odd, exited_odd
+
+    # we have visited this room one more time
+    visited_odd[position] = not visited_odd[position]
+
+    if visited_odd[position]:
+        # through first exit alphabetically
+        # update exit information
+        next_room = rooms[position][0]
+        exited_odd[position + next_room] = not exited_odd[position + next_room]
+        # update position
+        position = next_room
+
+    else:
+        # find first exit alphabetically that has been
+        # left through an odd number of times
+        for i in range(len(rooms[position])):
+            if exited_odd[position + rooms[position][i]]:
+                # is this the last room?
+                if i < len(rooms[position]) - 1:
+                    i += 1
+                # update exit information
+                next_room = rooms[position][i]
+                exited_odd[position + next_room] = not exited_odd[position + next_room]
+                # update position
+                position = next_room
+
+                break
+
+
+
+for _ in range(p):
+#    print(_)
+    move()
+
+print(position, end="")
+
+seen = []
+
+for i in range(q - p):
+#    print(i)
+    if (position, visited_odd, exited_odd) in seen:
+        index = seen.index((position, visited_odd, exited_odd))
+        index += q - p - i
+        index %= len(seen)
+#        print(seen)
+        position = seen[index][0]
+        break
+    else:
+        seen.append((position, deepcopy(visited_odd), deepcopy(exited_odd)))
+        move()
+
+print(position)
+
+print(time() - start)
 
 """
 b) A 
