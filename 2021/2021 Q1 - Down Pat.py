@@ -29,3 +29,17 @@ else:
 
 #print(time() - start)
 
+def d():
+    # initialise with number of pats for 0 and 1 length strings
+    pats = [0, 1]
+    for i in range(2, 25):
+        a, b = 1, i - 1
+        counter = 0
+        while b > 0 and a < i:
+            counter += pats[a] * pats[b]
+            a += 1
+            b -= 1
+        pats.append(counter)
+    print(pats[24])
+
+

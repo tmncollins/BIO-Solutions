@@ -1,88 +1,113 @@
-from collections import defaultdict
+from _collections import *
 from itertools import combinations_with_replacement as combs
-from functools import lru_cache
+from itertools import permutations as perms
+from itertools import combinations
+from copy import *
+from math import *
 from time import time
 
-"""
-THIS SOLUTION IS FAR TOO SLOW FOR SOME TEST CASES
-"""
-
-#@lru_cache(maxsize=None)
-def getFreq(arr1,arr2):
-    freq = defaultdict(int)
-    for a in arr1:
-        for b in arr2:
-            freq[a+b] += 1
-    return freq
-
-def getSums(n):
-    sums = set()
-    for i in range(1,n//2+1):
-        sums.add((i, n-i))
-    return sums
-
+FREQ = defaultdict(int)
 
 n = int(input())
-dieA = tuple(map(int, input().split()))
-dieB = tuple(map(int, input().split()))
-DIEA = sorted(dieA)
-DIEB = sorted(dieB)
+
+diea = tuple(sorted(list(map(int, input().split()))))
+dieb = tuple(sorted(list(map(int, input().split()))))
 
 start = time()
 
-freq = getFreq(dieA, dieB)
-minimum = min(dieA) + min(dieB)
-maximum = max(dieA) + max(dieB)
+m = 0
+mm = 20
+for a in diea:
+    for b in dieb:
+        FREQ[a+b] += 1
+        m = max(m, a+b)
+        mm = min(mm, a+b)
 
-# generate possible smallest numbers
-smallest = getSums(minimum)
-largest = 0
-for item in smallest:
-    largest = max(largest, maximum - min(item))
+m += 1
+#print(mm, m)
 
-tot = sum(dieA) + sum(dieB)
+# we can guarentee that one die cannot have numbers greater than 8
+nums = [1,2,3,4,5,6,7,8]
 
-nums = list("123456789ABC")
-conv = dict(zip(nums, [i for i in range(1,14)]))
+dice = list(combs(nums, n))
 
-options = list(combs(nums[:largest-1], n))
-p = len(options)
-c = 0
-impossible = True
-for dieA in options:
-    dieA = [conv[i] for i in dieA]
-    for dieB in options:
-        c += 1
-        dieB = [conv[i] for i in dieB]
-        if dieA < dieB: break
-        if sum(dieA) + sum(dieB) != tot: continue
-        if min(dieA) + min(dieB) != minimum: continue
-        if max(dieA) + max(dieB) != maximum: continue
-        if getFreq(dieA, dieB) == freq:
-            if sorted(dieA) in [DIEA, DIEB] and sorted(dieB) in [DIEA, DIEB]: continue
-            print(" ".join(list(map(str, dieA))))
-            print(" ".join(list(map(str, dieB))))
-            print("Time:", time() - start)
-            impossible = False
+#print(FREQ)
 
-if impossible:
+possible = False
+for da in dice:
+#    da = sorted(da)
+#    da = (1,3,3,5)
+#    print(da)
+    if da == diea or da == dieb:
+        continue
+    db = []
+    valid = True
+    freq = copy(FREQ)
+    for _ in range(n):
+        a = -1
+        for i in range(mm, m):
+            if freq[i] > 0:
+                a = i
+                break
+        if a == -1:
+            valid = False
+            break
+        db.append(a - da[0])
+        if db[-1] <= 0:
+            valid = False
+            break
+        for i in range(n):
+            v = db[-1] + da[i]
+            if freq[v] > 0:
+                freq[v] -= 1
+            else:
+                valid = False
+                break
+
+    if valid:
+        for a in da:
+            print(a, end=" ")
+        print()
+        for b in db:
+            print(b, end=" ")
+        print()
+        possible = True
+        break
+
+if not possible:
     print("Impossible")
 
-print("Time:", time() - start)
+print("Time Taken:", time() - start)
 
-"""
-b) 1 5 6 7 9 10, 3 4 5 7 8 9
-   2 3 4 6 7 8, 2 6 7 8 10 11
-   1 2 3 5 6 7, 3 7 8 9 11 12
-   The minimum is 4 and the maximum is 19
-   
-c) Largest: n^2
-   Smallest: 1 
-   
-d) 
-   
-"""
+###########
+# PART D
+###########
 
+def beats(a, b):
+    win = 0
+    for i in a:
+        for j in b:
+            if i > j:
+                win += 1
+    return win > 4.5
 
+def d():
+    dice = list(perms([1,2,3,4,5,6,7,8,9], 9))
+    ans = set()
+    for d in dice:
+#        print(d)
+        a = d[:3]
+        b = d[3:6]
+        c = d[6:]
+        if 1 not in a:
+            continue
 
+        if beats(a, b) and beats(b,c) and beats(c, a):
+            a = tuple(sorted(a))
+            b = tuple(sorted(b))
+            c = tuple(sorted(c))
+            ans.add((a,b,c))
+    for item in ans:
+        print(item)
 
+#d()
