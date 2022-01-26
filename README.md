@@ -14,5 +14,4 @@ If you have solution in any language feel free to send it in. All major language
 Currently missing perfect solutions include:
 
   - Egyptian Fractions 1997
-  - Dice Games 2000
   - Waves 2003
