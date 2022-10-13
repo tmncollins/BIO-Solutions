@@ -14,4 +14,7 @@ If you have solution in any language feel free to send it in. All major language
 Currently missing perfect solutions include:
 
   - Egyptian Fractions 1997
-  - Waves 2003
+
+With Thanks To:
+
+  - Isaac Eason (Waves 2003)
