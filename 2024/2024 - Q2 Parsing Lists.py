@@ -12,21 +12,9 @@ def E(i):
 def O(i):
     return i*2-1
 
-@lru_cache(maxsize=None)
-def T_brute(i):
-    if i == 1: return 1
-    j = 1
-    x = 1
-    while j < i:
-        x += 1
-        j += x
-#        print(x, i, j)
-    return x
-
-def T(i):
-    return T_brute(i)
-    # TODO - DOESN'T WORK
-    return int(sqrt((i)*2.5))
+# Thanks to @prantav for this O(1) function
+def T(x):
+    return ceil(((-1)+((1+(8*x))**0.5))/2)
 
 def get_bracket(string, i):
     depth = 1
