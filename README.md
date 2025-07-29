@@ -11,6 +11,8 @@ Solutions work for Part A of each question, with some solutions offering explain
 
 Some solutions do not work fast enough, though in some cases this is due to the limitations of the Python 3 language.
 
+The solutions offered here are only for BIO Round 1. I have written solutions for (almost) all of the BIO Final problems. Please contact if interested.
+
 If you have solution in any language feel free to send it in. All major languages welcome (within reason) and authors will be credited.
 
 Currently missing perfect solutions include:
